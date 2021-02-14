@@ -31,6 +31,17 @@ body {
 .tile.grass {
   background: url("grass.png");
 }
+.tile.grass2 {
+  background: url("grass2.png");
+}
+
+.tile.grass3 {
+  background: url("grass3.png");
+}
+
+.tile.grass4 {
+  background: url("grass4.png");
+}
 .tile.text {
   background: url("text.png");
   color: black;
@@ -50,6 +61,7 @@ body {
 #all {
   position: relative;
   margin-bottom: 20px;
+  width: 820px;
 }
 
 #players, #items, #dialogs {
@@ -60,11 +72,20 @@ body {
   position: absolute;
 }
 #input {
-  position: fixed;
+  position: absolute;
   bottom: 0px;
   height: 20px;
   left: 0px;
-  width: 100%;
+  width: 640px;
+  background-color: silver;
+  opacity: 50%;
+}
+input[type="text"] {
+  user-select: none;
+  border: none;
+  padding: 4px 4px;
+  line-height: 17px;
+  border-top: 1px solid black;
 }
 .player.up {
   background: url("up.png"), url("papa.png");
@@ -99,14 +120,11 @@ body {
   border-right: 0px;
 }
 #equipment {
-  position: fixed;
-  bottom: 20px;
-  right: 0px;
+  float: right;
+  height: 480px;
   width: 180px;
   background-color: silver;
   border-left: 1px solid black;
-  border-top: 1px solid black;
-  border-top-left-radius: 10px;
 }
 #equipment span {
   text-align: center;

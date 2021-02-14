@@ -3,12 +3,12 @@ window['socket_connect'] = function(host, port) {
 
   socket['onopen'] = function() {
     $(window).trigger("connected", socket);
-    console.log("connected");
+    //console.log("connected");
   };
 
   socket['onmessage'] = function(message) {
     msg = JSON.parse(message['data']);
-    console.log("received: ", msg);
+    //console.log("received: ", msg);
     if (msg['family']) {
       $(window).trigger(msg['family'], msg);
     }
@@ -16,12 +16,12 @@ window['socket_connect'] = function(host, port) {
 
   socket['onclose'] = function() {
     $(window).trigger("disconnected", socket);
-    console.log("closed");
+    //console.log("closed");
   };
 
   socket['onerror'] = function() {
     $(window).trigger("sockerror", socket);
-    console.log("error");
+    //console.log("error");
   };
 
   window.send = function(family, rest) {
@@ -29,7 +29,7 @@ window['socket_connect'] = function(host, port) {
     rest['family'] = family;
 
     socket.send(JSON.stringify(rest));
-    console.log("sent: ", rest);
+    //console.log("sent: ", rest);
   };
 
   return socket;

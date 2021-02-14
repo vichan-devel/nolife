@@ -18,6 +18,19 @@ ENTER=13
 CTRL=17
 SHIFT=16
 
+DIRS = [LEFT, UP, RIGHT, DOWN]
+
+keyState = {};
+
+window.addEventListener 'keydown', (e)->
+  if DIRS.includes(e.which)
+    for dir in DIRS
+      keyState[dir] = false
+  keyState[e.which] = true;
+
+window.addEventListener 'keyup', (e)->
+  keyState[e.which] = false;
+
 $ ->
   window.execonready()
   
@@ -58,12 +71,13 @@ m "hello", (e,msg)->
   b = $("body").html("")
   
   all = $("<div id='all'>").appendTo(b)
+  equipment = $("<div id='equipment'><span>SHIFT to switch, CTRL to use</span>").appendTo(all)
   scene = $("<div id='scene'>").appendTo(all)
   items = $("<div id='items'>").appendTo(all)
   players = $("<div id='players'>").appendTo(all)
   dialogs = $("<div id='dialogs'>").appendTo(all)
-  equipment = $("<div id='equipment'><span>SHIFT to switch, CTRL to use</span>").appendTo(b)
-  input = $("<input type='text' id='input'>").appendTo(b)
+  input = $("<input type='text' id='input' autofocus='1'>").appendTo(all)
+  $("#input").focus()
   
 m "mapupdate", (e,msg)->
   $("#scene").html("")
@@ -96,9 +110,9 @@ m "delplayer", (e,msg)->
       
 m "move", (e,msg)->
   player = $("#p"+msg['id'])
-  player.animate(txxy(msg['x'], msg['y']), 300, "linear")
+  player.animate(txxy(msg['x'], msg['y']), 200, "linear")
   hp = $("#hp"+msg['id'])
-  hp.animate(txxybar(msg['x'], msg['y']), 300, "linear")
+  hp.animate(txxybar(msg['x'], msg['y']), 200, "linear")
   player.attr("class", "player #{msg['dir']}")
   hpbarup msg['hp'], $("#hp"+msg['id']+" .bar")
       
@@ -114,13 +128,13 @@ m "chat", (e,msg)->
     
   h = cbox.html()
   h and h += "<br>"
-  h += msg['msg']
+  h += " " + msg['msg']
   cbox.html(h)
   
   pos['left'] -= cbox.width()/2 - 4
   pos['top'] -= cbox.height() + 10
   
-  pos['opacity'] = 1
+  pos['opacity'] = 0.7
   
   cts pos
     
@@ -167,41 +181,47 @@ m "endarrow", (e,msg)->
   $("#xa#{msg['id']}").remove()
 
 teardown = false
+exhaust = 0
 
 move = (dir)->
   send("move", "dir": dir)
 
   teardown = true
-  timeout 300, ->
+  exhaust = 0
+  timeout 200, ->
     teardown = false
 
-m "keydown", (e)->
-  k = e.keyCode
-  
-  handled = true
-  
-  switch k
-    when LEFT
-      move "left" unless teardown
-    when RIGHT
-      move "right" unless teardown
-    when UP
-      move "up" unless teardown
-    when DOWN
-      move "down" unless teardown
-    when CTRL
-      v = $("#input").val()
-      $("#input").val("")
-      send("doit", "text": v)
-    when SHIFT
-      send("switch")
-    when ENTER
-      v = $("#input").val()
-      $("#input").val("")
-      if v
-        send("chat", "msg": v)
-      $("#input").focus()
-    else
-      handled = false
-    
-  e.preventDefault() if handled
+setInterval ->
+  for k, v of keyState
+    if !v
+      continue
+
+    handled = true
+
+    switch parseInt(k)
+      when LEFT
+        move "left" unless teardown
+      when RIGHT
+        move "right" unless teardown
+      when UP
+        move "up" unless teardown
+      when DOWN
+        move "down" unless teardown
+      when CTRL
+        v = $("#input").val()
+        $("#input").val("")
+        send("doit", "text": v)
+        keyState[k] = false
+      when SHIFT
+        send("switch")
+        keyState[k] = false
+      when ENTER
+        v = $("#input").val()
+        $("#input").val("")
+        if v
+          send("chat", "msg": v)
+        $("#input").focus()
+        keyState[k] = false
+      else
+        handled = false
+, 1

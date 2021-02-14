@@ -4,14 +4,14 @@ h = Handler
 pls = {}
 chan = EM::Channel.new
 
-boundx = 50
+boundx = 40
 boundy = 30
 
 scene = []
 boundy.times do
   a = []
   boundx.times do
-    a << {klass: "grass", text: nil}
+    a << {klass: (["grass"] * 40 + ["grass2"] * 6 + ["grass3"] * 2 + ["grass4"]).sample, text: nil}
   end
   scene << a
 end
